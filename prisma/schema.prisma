@@ -12,3 +12,59 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum UserRole {
+  Agent
+  Customer
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  password  String
+  address   String
+  role      UserRole
+  agencyId  Int
+  agency    Agency   @relation(fields: [agencyId], references: [id])
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Agency {
+  id        Int      @id @default(autoincrement())
+  name      String
+  location  String
+  users     User[]
+  items     Item[]
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id             Int      @id @default(autoincrement())
+  name           String
+  estimatedPrice Decimal
+  unit           String
+  agencyId       Int
+  agency         Agency   @relation(fields: [agencyId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  Order          Order[]
+}
+
+model Order {
+  id              Int      @id @default(autoincrement())
+  amount          Int
+  deliveryOptions Boolean
+  customerId      Int
+  customer        User     @relation(fields: [customerId], references: [id])
+  itemId          Int
+  item            Item     @relation(fields: [itemId], references: [id])
+  agencyId        Int
+  agency          Agency   @relation(fields: [agencyId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
