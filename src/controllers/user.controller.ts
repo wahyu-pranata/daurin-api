@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 
 import { RegisterUser, LoginUser, CreateUser, userRegisterValidation } from '../entity/user.entity';
-import  { generateAccessToken } from '../helper/jwt';
+import  { generateAccessToken, decodeToken } from '../helper/jwt';
 import { ZodError } from 'zod';
 
 const prisma = new PrismaClient();
@@ -23,11 +23,13 @@ export  const userRegister = async (req: Request, res: Response) => {
       agencyId: null
     };
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: userData
     });
 
-    return res.status(201).json({ message: 'User successfully created' });
+    if(user) {
+      return res.status(201).json({ message: 'User successfully created' });
+    }
     
   } catch(err: any) {
     if(err.name == 'ZodError') {
@@ -72,3 +74,9 @@ export const userLogin = async (req: Request, res: Response) => {
   }
 }
 
+export const getUser = (req: Request, res: Response) => {
+  const { token } = req.cookies;
+
+  const userData = decodeToken(token);
+  return res.status(200).json({ user: userData });
+} 

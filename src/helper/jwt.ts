@@ -11,3 +11,7 @@ export const generateAccessToken = (payload: object) => {
   
   return {accessToken, refreshToken};
 }
+
+export const decodeToken = (token: string) => {
+  return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string);
+}
