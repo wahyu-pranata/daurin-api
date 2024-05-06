@@ -19,6 +19,7 @@ const corsOptions: CorsOptions = {
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors(corsOptions));
 app.use(consoleLogger);
 
 app.get("/", (req: Request, res: Response) => {
