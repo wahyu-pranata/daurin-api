@@ -27,6 +27,7 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Welcome to Daurin API");
 });
 
+app.use('/image', express.static('public'))
 app.use(userRouter);
 app.use(orderRouter)
 
