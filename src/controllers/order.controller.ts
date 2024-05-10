@@ -369,6 +369,7 @@ export const getLatestAddress = async (req: RequestWithUser, res: Response) => {
       select: {
         address: true,
       },
+      distinct: ["address"],
     });
 
     res.status(200).json(result);
