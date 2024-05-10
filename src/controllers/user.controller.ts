@@ -62,7 +62,7 @@ export const userLogin = async (req: Request, res: Response) => {
     res
       .status(200)
       .cookie('token', tokens.accessToken, { httpOnly: true })
-      .json({ message: "Login success", refreshToken: tokens.refreshToken });
+      .json({ message: "Login success", accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
 
   } catch (err: any) {
     if(err instanceof ZodError) {
@@ -75,7 +75,7 @@ export const userLogin = async (req: Request, res: Response) => {
 }
 
 export const getUser = (req: Request, res: Response) => {
-  const { token } = req.cookies;
+  const { token } = req.body;
 
   const userData = decodeToken(token);
   return res.status(200).json({ user: userData });
