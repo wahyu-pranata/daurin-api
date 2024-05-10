@@ -1,6 +1,13 @@
 import { z } from "zod";
 import { isEmail } from "validator";
 import { UserRole } from "@prisma/client";
+import { Request } from "express";
+import { JwtPayload } from "jsonwebtoken";
+
+export type User = {
+  id: string;
+  email: string;
+};
 
 export type CreateUser = {
   name: string;
@@ -27,6 +34,24 @@ export type LoginUser = {
   password: string;
 };
 
+export type ActivateAccountUser = {
+  name: string;
+  noKTP: string;
+  ktpImage: string;
+  suratKepemilikanImage: string;
+  image: string;
+};
+
+export interface RequestWithUser extends Request {
+  user?: JwtPayload;
+}
+
+export interface Token {
+  payload: User;
+  iat: number;
+  exp: number;
+}
+
 export const userRegisterValidation = z.object({
   name: z.string(),
   email: z
@@ -35,6 +60,7 @@ export const userRegisterValidation = z.object({
   password: z.string(),
   city: z.string(),
   province: z.string(),
+  address: z.string(),
 });
 
 export const userLoginValidation = z.object({

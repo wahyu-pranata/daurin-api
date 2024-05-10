@@ -7,6 +7,8 @@ import {
   LoginUser,
   CreateUser,
   userRegisterValidation,
+  ActivateAccountUser,
+  RequestWithUser,
 } from "../entity/user.entity";
 import { generateAccessToken, decodeToken } from "../helper/jwt";
 import { ZodError } from "zod";
@@ -24,21 +26,28 @@ export const userRegister = async (req: Request, res: Response) => {
     const userData: CreateUser = {
       ...parsedData,
       role: "Customer",
-      address: "-",
       agencyId: null,
     };
 
-    const user = await prisma.user.create({
-      data: userData,
+    console.log("user data: ", userData);
+    await prisma.user.create({
+      data: {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        role: userData.role,
+        city: userData.city,
+        province: userData.province,
+        address: userData.address,
+      },
     });
-
-    if (user) {
-      return res.status(201).json({ message: "User successfully created" });
-    }
+    return res.status(201).json({ message: "User successfully created" });
   } catch (err: any) {
     if (err.name == "ZodError") {
       res.status(400).json(err.issues);
     }
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
@@ -68,7 +77,7 @@ export const userLogin = async (req: Request, res: Response) => {
       });
     }
 
-    const tokens = generateAccessToken(user);
+    const tokens = generateAccessToken({ id: user.id, name: user.name });
     res
       .status(200)
       .cookie("token", tokens.accessToken, { httpOnly: true })
@@ -87,9 +96,23 @@ export const userLogin = async (req: Request, res: Response) => {
   }
 };
 
-export const getUser = (req: Request, res: Response) => {
-  const { token } = req.body;
+export const getUser = async (req: RequestWithUser, res: Response) => {
+  console.log(req.user);
+  if (!req.user) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+  const id = req.user.id;
 
-  const userData = decodeToken(token);
-  return res.status(200).json({ user: userData });
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  return res.status(200).json(user);
+};
+
+export const activateAccount = (req: Request, res: Response) => {
+  const data: ActivateAccountUser = req.body;
+  res.status(200).json({ message: "success", file: req.files });
 };
