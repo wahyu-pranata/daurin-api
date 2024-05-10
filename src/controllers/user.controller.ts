@@ -25,7 +25,6 @@ export const userRegister = async (req: Request, res: Response) => {
 
     const userData: CreateUser = {
       ...parsedData,
-      role: "Customer",
       agencyId: null,
     };
 
@@ -47,6 +46,7 @@ export const userRegister = async (req: Request, res: Response) => {
   } catch (err: any) {
     if (err.name == "ZodError") {
       res.status(400).json(err.issues);
+      return;
     }
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });
@@ -99,7 +99,6 @@ export const userLogin = async (req: Request, res: Response) => {
 };
 
 export const getUser = async (req: RequestWithUser, res: Response) => {
-  console.log(req.user);
   if (!req.user) {
     res.status(401).json({ message: "Unauthorized" });
     return;

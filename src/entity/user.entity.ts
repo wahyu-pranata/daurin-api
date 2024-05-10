@@ -27,6 +27,7 @@ export type RegisterUser = {
   city: string;
   province: string;
   address: string;
+  role: UserRole;
 };
 
 export type LoginUser = {
@@ -61,6 +62,7 @@ export const userRegisterValidation = z.object({
   city: z.string(),
   province: z.string(),
   address: z.string(),
+  role: z.enum(["Agent", "Customer"]),
 });
 
 export const userLoginValidation = z.object({
