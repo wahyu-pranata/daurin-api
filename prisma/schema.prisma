@@ -43,6 +43,7 @@ model Agency {
   id        Int      @id @default(autoincrement())
   name      String
   location  String
+  rate      Float    @default(0)
   users     User[]
   items     Item[]
   orders    Order[]
@@ -51,29 +52,43 @@ model Agency {
 }
 
 model Item {
-  id             Int      @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   name           String
   estimatedPrice Decimal
   unit           String
   agencyId       Int
-  agency         Agency   @relation(fields: [agencyId], references: [id])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  Order          Order[]
+  agency         Agency          @relation(fields: [agencyId], references: [id])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  ItemsOnOrders  ItemsOnOrders[]
 }
 
 model Order {
-  id              Int         @id @default(autoincrement())
-  amount          Int
-  deliveryOptions Boolean
-  status          OrderStatus @default(Pending)
-  image           String
-  customerId      Int
-  customer        User        @relation(fields: [customerId], references: [id])
-  itemId          Int
-  item            Item        @relation(fields: [itemId], references: [id])
-  agencyId        Int
-  agency          Agency      @relation(fields: [agencyId], references: [id])
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id               Int             @id @default(autoincrement())
+  deliveryOptions  String
+  status           OrderStatus     @default(Pending)
+  shippingCost     Int             @default(0)
+  transactionProof String          @default("")
+  address          String
+  rate             Int?
+  customerId       Int
+  customer         User            @relation(fields: [customerId], references: [id])
+  agencyId         Int
+  agency           Agency          @relation(fields: [agencyId], references: [id])
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  ItemsOnOrders    ItemsOnOrders[]
+}
+
+model ItemsOnOrders {
+  orderId    Int
+  itemId     Int
+  price      Int
+  image      String
+  amount     Int
+  assignedAt DateTime @default(now())
+  orders     Order    @relation(fields: [orderId], references: [id])
+  items      Item     @relation(fields: [itemId], references: [id])
+
+  @@id([orderId, itemId])
 }
