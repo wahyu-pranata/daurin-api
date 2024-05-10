@@ -31,6 +31,8 @@ model User {
   email     String
   password  String
   address   String
+  city      String
+  Province  String
   role      UserRole
   agencyId  Int?
   agency    Agency?  @relation(fields: [agencyId], references: [id])
