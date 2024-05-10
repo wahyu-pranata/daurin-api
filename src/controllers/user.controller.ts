@@ -30,7 +30,7 @@ export const userRegister = async (req: Request, res: Response) => {
     };
 
     console.log("user data: ", userData);
-    await prisma.user.create({
+    const result = await prisma.user.create({
       data: {
         name: userData.name,
         email: userData.email,
@@ -41,7 +41,9 @@ export const userRegister = async (req: Request, res: Response) => {
         address: userData.address,
       },
     });
-    return res.status(201).json({ message: "User successfully created" });
+    return res
+      .status(201)
+      .json({ message: "User successfully created", data: result });
   } catch (err: any) {
     if (err.name == "ZodError") {
       res.status(400).json(err.issues);
@@ -110,9 +112,4 @@ export const getUser = async (req: RequestWithUser, res: Response) => {
     },
   });
   return res.status(200).json(user);
-};
-
-export const activateAccount = (req: Request, res: Response) => {
-  const data: ActivateAccountUser = req.body;
-  res.status(200).json({ message: "success", file: req.files });
 };

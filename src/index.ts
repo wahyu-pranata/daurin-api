@@ -8,6 +8,7 @@ import consoleLogger from "./helper/consoleLogger";
 
 import userRouter from "./routes/user.route";
 import orderRouter from "./routes/order.route";
+import agencyRouter from "./routes/agency.route";
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/public", express.static("public"));
 app.use(userRouter);
 app.use(orderRouter);
+app.use(agencyRouter);
 
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);

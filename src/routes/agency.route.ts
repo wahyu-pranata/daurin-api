@@ -1,12 +1,11 @@
-import { Request, Response, Router } from "express";
-import {
-  userLogin,
-  userRegister,
-  getUser,
-} from "../controllers/user.controller";
-import { isAuthenticated } from "../middlewares/auth";
+import * as path from "path";
+import { Router } from "express";
 import multer, { Options as MulterOptions } from "multer";
-import path from "path";
+import { isAuthenticated } from "../middlewares/auth";
+import {
+  getAllAgencies,
+  activateAccount,
+} from "../controllers/agency.controller";
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -23,7 +22,7 @@ const multerStorage = multer.diskStorage({
 const upload = multer({
   storage: multerStorage,
   limits: {
-    fileSize: 20 * 1024 * 1024,
+    fileSize: 2 * 1024 * 1024,
   },
   fileFilter(req, file, cb) {
     if (!file.mimetype.startsWith("image")) {
@@ -34,10 +33,17 @@ const upload = multer({
   },
 });
 
-const userRouter = Router();
+const agencyRouter = Router();
 
-userRouter.post("/user/register", userRegister);
-userRouter.post("/user/login", userLogin);
-userRouter.get("/user", isAuthenticated, getUser);
+agencyRouter.post(
+  "/agency/activate",
+  upload.fields([
+    { name: "ktpImage", maxCount: 1 },
+    { name: "suratKepemilikanImage", maxCount: 1 },
+    { name: "image", maxCount: 1 },
+  ]),
+  activateAccount,
+);
+agencyRouter.get("/agencies", getAllAgencies);
 
-export default userRouter;
+export default agencyRouter;

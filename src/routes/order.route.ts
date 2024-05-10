@@ -11,6 +11,7 @@ import {
   updateToCancel,
   updateToProcess,
   updateToSuccess,
+  getLatestAddress,
 } from "../controllers/order.controller";
 import { isAuthenticated } from "../middlewares/auth";
 
@@ -53,7 +54,8 @@ orderRouter.put(
 );
 orderRouter.put("/order/cancel/:orderId", updateToCancel);
 orderRouter.put("/order/rate/:orderId", rateOrder);
-orderRouter.post("/order", upload.array("image"), createOrder);
+orderRouter.get("/order/addresses", getLatestAddress);
 orderRouter.get("/order/:id", getSingleOrder);
+orderRouter.post("/order", upload.array("image"), createOrder);
 
 export default orderRouter;

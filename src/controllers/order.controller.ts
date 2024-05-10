@@ -2,22 +2,23 @@ import { Request, Response } from "express";
 import { ProcessOrder, processOrderSchema } from "../entity/order.entity";
 import { PrismaClient } from "@prisma/client";
 import { ZodError } from "zod";
+import { RequestWithUser } from "../entity/user.entity";
 
 const prisma = new PrismaClient();
 
-export const createOrder = async (req: Request, res: Response) => {
+export const createOrder = async (req: RequestWithUser, res: Response) => {
   try {
     if (!req.files) {
       res.status(400).json({ message: "Image is required" });
       return;
     }
-    const { address, customerId, agencyId, deliveryOptions, items } = req.body;
+    const { address, agencyId, deliveryOptions, items } = req.body;
     const orderResult = await prisma.order.create({
       data: {
         address,
         deliveryOptions,
         agencyId: parseInt(agencyId),
-        customerId: parseInt(customerId),
+        customerId: parseInt(req.user!.id),
       },
     });
 
@@ -347,6 +348,29 @@ export const rateOrder = async (req: Request, res: Response) => {
     res.status(500).json({
       message:
         "Something went wrong. Please ask the server manager for the log",
+    });
+  }
+};
+
+export const getLatestAddress = async (req: RequestWithUser, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    console.log(userId);
+
+    const result = await prisma.order.findMany({
+      where: {
+        customerId: userId,
+      },
+      select: {
+        address: true,
+      },
+    });
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Something went wrong. Please ask server manager for the log",
     });
   }
 };
