@@ -19,6 +19,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "qs": "^6.12.1",
     "validator": "^13.11.0",
     "zod": "^3.23.6"
   },
@@ -30,6 +31,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.12.8",
+    "@types/qs": "^6.9.15",
     "@types/validator": "^13.11.9",
     "multer": "1.4.5-lts.1",
     "nodemon": "^3.1.0",

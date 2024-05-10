@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
+import qs from "qs";
 
 import consoleLogger from "./helper/consoleLogger";
 
@@ -17,6 +18,9 @@ const corsOptions: CorsOptions = {
   credentials: true,
 };
 
+app.set("query parser", (str: string) => {
+  return qs.parse(str);
+});
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
