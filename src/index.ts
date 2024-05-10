@@ -14,7 +14,17 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT;
 const corsOptions: CorsOptions = {
-  origin: ["http://localhost:3000", "http://localhost:5173"],
+  origin: [
+    "http://localhost:3000",
+    "localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:3001",
+    "localhost:3001",
+    "http://127.0.0.1:3000",
+    "127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "127.0.0.1:3001",
+  ],
   credentials: true,
 };
 
