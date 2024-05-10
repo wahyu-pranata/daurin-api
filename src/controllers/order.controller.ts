@@ -130,7 +130,7 @@ export const getOrderByCustomer = async (req: Request, res: Response) => {
         }),
         type: val.deliveryOptions,
         status: val.status,
-        addres: val.address,
+        address: val.address,
         shippingCost: val.shippingCost,
       };
     });
@@ -139,6 +139,63 @@ export const getOrderByCustomer = async (req: Request, res: Response) => {
       data: mappedResult,
     });
   } catch (err: any) {
+    console.log(err);
+    res.status(500).json({
+      message:
+        "Something went wrong. Please ask the server manager for the log",
+    });
+  }
+};
+
+export const getSingleOrder = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const orderResult = await prisma.order.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+      include: {
+        agency: true,
+        customer: true,
+        ItemsOnOrders: {
+          include: {
+            items: true,
+          },
+        },
+      },
+    });
+    if (!orderResult) {
+      res.status(404).json({ message: "Not found" });
+      return;
+    }
+    const mappedResult = {
+      items: orderResult.ItemsOnOrders.map((item) => {
+        return {
+          id: item.itemId,
+          name: item.items.name,
+          unit: item.items.unit,
+          estimatedPrice: item.items.estimatedPrice,
+          image: item.image,
+          amount: item.amount,
+        };
+      }),
+      agency: {
+        id: orderResult.agency.id,
+        name: orderResult.agency.id,
+        location: orderResult.agency.location,
+      },
+      customer: {
+        id: orderResult.customer.id,
+        name: orderResult.customer.name,
+      },
+      type: orderResult.deliveryOptions,
+      status: orderResult.status,
+      shippingCost: orderResult.shippingCost,
+      address: orderResult.address,
+    };
+
+    res.status(200).json({ data: mappedResult });
+  } catch (err) {
     console.log(err);
     res.status(500).json({
       message:

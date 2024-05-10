@@ -6,6 +6,7 @@ import {
   createOrder,
   getOrderByAgency,
   getOrderByCustomer,
+  getSingleOrder,
   rateOrder,
   updateToCancel,
   updateToProcess,
@@ -44,7 +45,6 @@ orderRouter.use(isAuthenticated);
 
 orderRouter.get("/order/agency/:id", getOrderByAgency);
 orderRouter.get("/order/customer/:id", getOrderByCustomer);
-orderRouter.post("/order", upload.array("image"), createOrder);
 orderRouter.put("/order/process/:orderId", updateToProcess);
 orderRouter.put(
   "/order/success/:orderId",
@@ -53,5 +53,7 @@ orderRouter.put(
 );
 orderRouter.put("/order/cancel/:orderId", updateToCancel);
 orderRouter.put("/order/rate/:orderId", rateOrder);
+orderRouter.post("/order", upload.array("image"), createOrder);
+orderRouter.get("/order/:id", getSingleOrder);
 
 export default orderRouter;
