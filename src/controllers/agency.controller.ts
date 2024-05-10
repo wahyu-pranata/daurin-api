@@ -7,7 +7,18 @@ const prisma = new PrismaClient();
 
 export const getAllAgencies = async (req: RequestWithUser, res: Response) => {
   try {
-    const result = await prisma.agency.findMany();
+    const result = await prisma.agency.findMany({
+      include: {
+        items: {
+          select: {
+            id: true,
+            name: true,
+            estimatedPrice: true,
+            unit: true,
+          },
+        },
+      },
+    });
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -21,22 +32,23 @@ export const getAllAgencies = async (req: RequestWithUser, res: Response) => {
 export const activateAccount = async (req: RequestWithUser, res: Response) => {
   try {
     const files = req.files as unknown as {
-      [fieldname: string]: Express.Multer.File;
+      [fieldname: string]: Express.Multer.File[];
     };
     if (!files) {
       res.status(400).json({ message: "file is required" });
       return;
     }
     const body = req.body;
+    console.log(files.ktpImage[0].path);
 
     const agencyResult = await prisma.agency.create({
       data: {
         name: body.name,
         location: body.location,
         ktpNumber: body.ktpNumber,
-        image: files.image.path,
-        ktpImage: files.ktpImage.path,
-        suratKepemilikanImage: files.suratKepemilikanImage.path,
+        image: files.image[0].path,
+        ktpImage: files.ktpImage[0].path,
+        suratKepemilikanImage: files.suratKepemilikanImage[0].path,
       },
     });
     await prisma.user.update({
