@@ -188,6 +188,11 @@ export const getSingleOrder = async (req: Request, res: Response) => {
       customer: {
         id: orderResult.customer.id,
         name: orderResult.customer.name,
+        email: orderResult.customer.email,
+        image: orderResult.customer.image,
+        address: orderResult.customer.address,
+        city: orderResult.customer.city,
+        province: orderResult.customer.province,
       },
       type: orderResult.deliveryOptions,
       status: orderResult.status,
