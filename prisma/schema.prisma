@@ -32,7 +32,7 @@ model User {
   password  String
   address   String
   city      String
-  Province  String
+  province  String
   role      UserRole
   agencyId  Int?
   agency    Agency?  @relation(fields: [agencyId], references: [id])
